@@ -17,6 +17,7 @@ import { RadioButtonModule } from 'primeng/radiobutton';
 import { InputNumberModule } from 'primeng/inputnumber';
 import { DialogModule } from 'primeng/dialog';
 import { HttpClientModule } from '@angular/common/http';
+import {Car} from './models'
 
 
 
@@ -39,7 +40,8 @@ import { HttpClientModule } from '@angular/common/http';
         RadioButtonModule,
         InputNumberModule,
         DialogModule,
-        HttpClientModule
+        HttpClientModule,
+        Car
 
 
     ],

@@ -1,4 +1,4 @@
-interface InventoryStatus {
+interface car {
     label: string;
     value: string;
 }
@@ -9,7 +9,7 @@ export interface Product {
     description?: string;
     price?: number;
     quantity?: number;
-    inventoryStatus?: InventoryStatus;
+   
     category?: string;
     image?: string;
     rating?: number;

@@ -8,6 +8,7 @@ import {Car} from './models'
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Color } from './colors.enum';
 import { Observer } from 'rxjs';
+import { tap, catchError } from 'rxjs/operators';
 
 
 @Component({
@@ -25,12 +26,15 @@ export class CrudComponent implements OnInit {
         model: '',
         brand: '',
         year: null,
-        color: ''
+        color: '',
+
       };
 
       colors: Color[] = Object.values(Color);
 
     productDialog: boolean = false;
+
+    productDialogUpdate: boolean = false;
 
     deleteProductDialog: boolean = false;
 
@@ -46,7 +50,9 @@ export class CrudComponent implements OnInit {
 
     cols: any[] = [];
 
-    cars : Object
+    cars : any
+
+    id: number;
 
 
     statuses: any[] = [];
@@ -101,50 +107,101 @@ export class CrudComponent implements OnInit {
 
 
     getCars() {
-        this.garageService.getCars().subscribe(
-          datas => {
-           this.cars = datas;
-          },
-          error => {
-            console.log(error);
-          }
-        );
-    };
+        this.garageService.getCars().subscribe({
+
+
+            next: (car: any) => {
+
+              // Logique pour le callback next
+            },
+            error: (error: any) => {
+              // Logique pour le callback error
+            },
+            complete: () => {
+              // Logique pour le callback complete
+            }
+          });
+
+    }
 
 
     openNew() {
-        
+
         this.submitted = false;
         this.productDialog = true;
 
     }
 
-    deleteSelectedProducts() {
+    openDelete() {
         this.deleteProductsDialog = true;
     }
 
-    editProduct(product: Product) {
-        this.product = { ...product };
-        this.productDialog = true;
+    deleteSelecteCar(id: number): void {
+      this.garageService.deleteSelecteCar(id).subscribe({
+        next: () => {
+          console.log('Objet supprimé avec succès.');
+        },
+        error: (error) => {
+          console.error('Erreur lors de la suppression de l\'objet :', error);
+        },
+        complete: () => {
+          // Complété
+        }
+      });
+      this.messageService.add({ severity: 'success', summary: 'Successful', detail: 'Product Deleted', life: 3000 });
+
+      this.deleteProductsDialog = false;
+
     }
 
-    deleteProduct(product: Product) {
-        this.deleteProductDialog = true;
-        this.product = { ...product };
+    editProduct() {
+        this.submitted = false;
+        this.productDialogUpdate = true;
     }
+
+
+
+    updateCar() {
+        this.garageService.updateCar(this.car)
+          .subscribe({
+            next: response => {
+              console.log('Produit mis à jour avec succès', response);
+              // Effectue les actions supplémentaires nécessaires après la mise à jour réussie
+            },
+            error: error => {
+              console.error('Une erreur s\'est produite lors de la mise à jour du produit', error);
+              // Gère les erreurs de manière appropriée
+            },
+            complete: () => {
+              // Fonction de rappel complète (facultative)
+            }
+          });
+
+          this.productDialogUpdate = false;
+          this.messageService.add({ severity: 'success', summary: 'Successful', detail: 'car update', life: 3000 });
+    }
+
+
+
+
+    deleteProducts(id: number) {
+        this.deleteProductDialog = true;
+       // this.id = { ...id };
+    }
+
 
     confirmDeleteSelected() {
         this.deleteProductsDialog = false;
-        this.products = this.products.filter(val => !this.selectedProducts.includes(val));
+        this.cars = this.car.filter(val => !this.selectedProducts.includes(val));
         this.messageService.add({ severity: 'success', summary: 'Successful', detail: 'Products Deleted', life: 3000 });
         this.selectedProducts = [];
     }
 
-    confirmDelete() {
+    deleteProduct() {
         this.deleteProductDialog = false;
-        this.products = this.products.filter(val => val.id !== this.product.id);
+        this.cars = this.cars.filter(val => val.id !== this.car.id);
         this.messageService.add({ severity: 'success', summary: 'Successful', detail: 'Product Deleted', life: 3000 });
-        this.product = {};
+        this.car = {};
     }
 
     hidesDialog() {
@@ -171,15 +228,9 @@ export class CrudComponent implements OnInit {
         };
 
         this.garageService.addCar(this.car).subscribe(observer);
-        this.formulaireGroup.reset({
-            id: null,
-            model: '',
-            brand: '',
-            year: null,
-            color: ''
-        } );
+
         this.productDialog = false;
-      }
+    }
 
 
   /*  addCars(car: Car) {

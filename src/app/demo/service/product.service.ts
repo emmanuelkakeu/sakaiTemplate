@@ -1,9 +1,13 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Product } from '../api/product';
-
+import { Car} from '../components/pages/crud/models';
+import { environment} from '../../../environments/environment';
+import { Observable } from 'rxjs';
 @Injectable()
 export class ProductService {
+
+    URL = `${environment.apiUrl}/cars`;
 
     constructor(private http: HttpClient) { }
 
@@ -33,5 +37,9 @@ export class ProductService {
             .toPromise()
             .then(res => res.data as Product[])
             .then(data => data);
+    }
+
+    getCars(): Observable<any> {
+        return this.http.get<Car[]>(this.URL);
     }
 }

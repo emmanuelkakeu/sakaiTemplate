@@ -1,3 +1,4 @@
+
 <div class="grid">
     <div class="col-12">
         <div class="card px-6 py-6">
@@ -6,7 +7,7 @@
                 <ng-template pTemplate="left">
                     <div class="my-2">
                         <button pButton pRipple label="New" icon="pi pi-plus" class="p-button-success mr-2" (click)="openNew()"></button>
-                        <button pButton pRipple label="Delete" icon="pi pi-trash" class="p-button-danger" (click)="deleteSelectedProducts()" [disabled]="!selectedProducts || !selectedProducts.length"></button>
+                        <button pButton pRipple label="Delete" icon="pi pi-trash" class="p-button-danger" (click)="openDelete()" [disabled]="!selectedProducts || !selectedProducts.length"></button>
                     </div>
                 </ng-template>
 
@@ -16,60 +17,61 @@
                 </ng-template>
             </p-toolbar>
 
-            <p-table #dt [value]="products" [columns]="cols" responsiveLayout="scroll" [rows]="10" [globalFilterFields]="['name','country.name','representative.name','status']" [paginator]="true" [rowsPerPageOptions]="[10,20,30]" [showCurrentPageReport]="true" currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries" [(selection)]="selectedProducts" selectionMode="multiple" [rowHover]="true" dataKey="id">
+            <p-table #dt [value]="cars" [columns]="cols"  responsiveLayout="scroll" [rows]="10" [globalFilterFields]="['car.id','car.color','car.year']" [paginator]="true" [rowsPerPageOptions]="[10,20,30,40,50]" [showCurrentPageReport]="true" currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries" [(selection)]="selectedProducts" selectionMode="multiple" [rowHover]="true" dataKey="id">
                 <ng-template pTemplate="caption">
                     <div class="flex flex-column md:flex-row md:justify-content-between md:align-items-center">
-                        <h5 class="m-0">Manage Products</h5>
+                        <h5 class="m-0">Gestion garage</h5>
                         <span class="block mt-2 md:mt-0 p-input-icon-left">
                             <i class="pi pi-search"></i>
                             <input pInputText type="text" (input)="onGlobalFilter(dt, $event)" placeholder="Search..."  class="w-full sm:w-auto"/>
                         </span>
                     </div>
+
                 </ng-template>
+
+
+
                 <ng-template pTemplate="header">
-                    <tr>
+                    <tr >
                         <th style="width: 3rem">
                             <p-tableHeaderCheckbox></p-tableHeaderCheckbox>
                         </th>
-                        <th pSortableColumn="code">Code <p-sortIcon field="code"></p-sortIcon></th>
-                        <th pSortableColumn="name">Name <p-sortIcon field="name"></p-sortIcon></th>
-                        <th>Image</th>
-                        <th pSortableColumn="price">Price <p-sortIcon field="price"></p-sortIcon></th>
-                        <th pSortableColumn="category">Category <p-sortIcon field="category"></p-sortIcon></th>
-                        <th pSortableColumn="rating">Reviews <p-sortIcon field="rating"></p-sortIcon></th>
-                        <th pSortableColumn="inventoryStatus">Status <p-sortIcon field="inventoryStatus"></p-sortIcon></th>
-                        <th></th>
+                        <th pSortableColumn="ID">id </th>
+                        <th pSortableColumn="model">model</th>
+                        <th pSortableColumn="brand">brand</th>
+                        <th  pSortableColumn="year">Year</th>
+                        <th pSortableColumn="color">Color</th>
+                            <th></th>
                     </tr>
                 </ng-template>
-                <ng-template pTemplate="body" let-product>
-                    <tr>
+
+
+
+                <ng-template pTemplate="body" let-car>
+                    <tr   >
                         <td>
-                            <p-tableCheckbox [value]="product"></p-tableCheckbox>
+                            <p-tableCheckbox   [value]="car"  ></p-tableCheckbox>
                         </td>
-                        <td style="width:14%; min-width:10rem;"><span class="p-column-title">Code</span>
-                            {{product.code || product.id}}
+                        <td style="width:14%; min-width:10rem;" ><span class="p-column-title">id</span>
+                            {{ car.id}}
                         </td>
                         <td style="width:14%; min-width:10rem;">
-                            <span class="p-column-title">Name</span>
-                            {{product.name}}
-                        </td>
-                        <td style="width:14%; min-width:10rem;"><span class="p-column-title">Image</span>
-                            <img [src]="'assets/demo/images/product/' + product.image" [alt]="product.name" width="100" class="shadow-4" />
+                            <span class="p-column-title">model</span>
+                            {{car.model}}
                         </td>
                         <td style="width:14%; min-width:8rem;">
-                            <span class="p-column-title">Price</span>
-                            {{product.price | currency:'USD'}}
+                            <span class="p-column-title">brand</span>
+                            {{car.brand}}
+                        </td>
+                        <td style="width:14%; min-width:8rem;">
+                            <span class="p-column-title">year</span>
+                            {{car.year}}
                         </td>
                         <td style="width:14%; min-width:10rem;">
-                            <span class="p-column-title">Category</span>
-                            {{product.category}}
+                            <span class="p-column-title">color</span>
+                            {{car.color}}
                         </td>
-                        <td style="width:14%; min-width: 10rem;"><span class="p-column-title">Reviews</span>
-                            <p-rating [ngModel]="product.rating" [readonly]="true" [cancel]="false"></p-rating>
-                        </td>
-                        <td style="width:14%; min-width: 10rem;"><span class="p-column-title">Status</span>
-                            <span [class]="'product-badge status-' + (product.inventoryStatus ? product.inventoryStatus.toLowerCase() : '')">{{product.inventoryStatus}}</span>
-                        </td>
+
                         <td>
                             <div class="flex">
                                 <button pButton pRipple icon="pi pi-pencil" class="p-button-rounded p-button-success mr-2" (click)="editProduct(product)"></button>
@@ -80,6 +82,9 @@
                 </ng-template>
             </p-table>
         </div>
+
+
+
 
         <p-dialog [(visible)]="productDialog" [style]="{width: '450px'}" header="Product Details" [modal]="true" class="p-fluid">
             <form (ngSubmit)="onSubmit()">
@@ -117,14 +122,57 @@
             </form>
         </p-dialog>
 
+
+
+
+        <p-dialog [(visible)]="productDialogUpdate" [style]="{width: '450px'}" header="Product Details" [modal]="true" class="p-fluid">
+            <form (ngSubmit)=" updateCar()">
+
+                <div class="form-group">
+                  <label for="model">ID:</label>
+                  <input type="number" class="form-control" id="model" name="model" [(ngModel)]="car.id" required>
+                </div>
+                <div class="form-group">
+                  <label for="model">Modèle:</label>
+                  <input type="text" class="form-control" id="model" name="model" [(ngModel)]="car.model" required>
+                </div>
+
+                <div class="form-group">
+                  <label for="brand">Marque:</label>
+                  <input type="text" class="form-control" id="brand" name="brand" [(ngModel)]="car.brand" required>
+                </div>
+
+                <div class="form-group">
+                  <label for="year">Année:</label>
+                  <input type="number" class="form-control" id="year" name="year" [(ngModel)]="car.year" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="color" style="margin-top: 10px;" >Couleur :</label>
+                    <select id="color" [(ngModel)]="car.color" name="color" required style="margin-top: 10px;"  >
+                      <option *ngFor="let color of colors" [value]="color">{{ color }}</option>
+                    </select>
+                </div>
+
+                <button type="submit" class="btn btn-primary" style="margin-top: 25px; margin-left: 10px; padding: 12px, 50px; font-weight: bold; " >UpDate</button>
+                <button type="button" class="btn btn-secondary" style="margin-top: 25px; margin-left: 200px; padding: 12px, 50px; font-weight: bold; "  (click)="hidesDialog()" >Annuler</button>
+
+                <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+                <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+                <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js"></script>
+
+
+            </form>
+        </p-dialog>
+
         <p-dialog [(visible)]="deleteProductDialog" header="Confirm" [modal]="true" [style]="{width:'450px'}">
             <div class="flex align-items-center justify-content-center">
                 <i class="pi pi-exclamation-triangle mr-3" style="font-size: 2rem"></i>
-                <span *ngIf="product">Are you sure you want to delete <b>{{product.name}}</b>?</span>
+                <span *ngIf="car">Are you sure you want to delete <b>{{car.id}}</b>?</span>
             </div>
             <ng-template pTemplate="footer">
                 <button pButton pRipple icon="pi pi-times" class="p-button-text" label="No" (click)="deleteProductDialog = false"></button>
-                <button pButton pRipple icon="pi pi-check" class="p-button-text" label="Yes" (click)="confirmDelete()"></button>
+                <button pButton pRipple icon="pi pi-check" class="p-button-text" label="Yes" (click)="deleteProduct()"></button>
             </ng-template>
         </p-dialog>
 
@@ -134,8 +182,14 @@
                 <span>Are you sure you want to delete selected products?</span>
             </div>
             <ng-template pTemplate="footer">
-                <button pButton pRipple icon="pi pi-times" class="p-button-text" label="No" (click)="deleteProductsDialog = false"></button>
-                <button pButton pRipple icon="pi pi-check" class="p-button-text" label="Yes" (click)="confirmDeleteSelected()"></button>
+                <form (ngSubmit)="deleteSelecteCar(this.id)">
+                    <label for="id">ID:</label>
+
+                    <input type="number" class="form-control" [(ngModel)]="id" id="id" name="id" placeholder="Identifient" required>
+
+                    <button pButton pRipple icon="pi pi-times" class="p-button-text" label="No" (click)="deleteProductsDialog = false"></button>
+                    <button pButton pRipple icon="pi pi-check" class="p-button-text" label="Yes" type="submit" ></button>
+                </form>
             </ng-template>
         </p-dialog>
     </div>
